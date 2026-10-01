@@ -11,10 +11,10 @@
 function findLast(x, y) {
     if (!Array.isArray(x)) {
         throw new TypeError('The first parameter must be an array');
- }
+    }
     if (typeof y !== 'number') {
         throw new TypeError('The second parameter must be a number');
- }
+    }
     for (let i = x.length - 1; i > 0; i--) {
         if (x[i] === y) {
             return i;
@@ -43,6 +43,7 @@ function lastZero(x) {
     }
     return -1;
 }
+
 // test: x = [0, 1, 0]; Expected = 2
 /**
 * Count positive elements
@@ -65,6 +66,7 @@ function countPositive(x) {
     return count;
 }
 // test: x = [-4, 2, 0, 2]; Expcted = 2
+
 /**
 * Count odd or postive elements
 *
