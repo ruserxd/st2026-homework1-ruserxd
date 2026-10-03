@@ -1,0 +1,79 @@
+ ▐▛███▛█   Claude Code v2.1.288
+▝▜██████▀  Opus 5.5 · Claude Pro
+ ▝▝   ▝▝   ~/hw1-spec
+
+
+❯ /**                                                                           
+  - Find last index of zero                                                     
+  -                                                                             
+  - @param {Object[]} x - The array to search.                                  
+  -                                                                             
+  - @returns {number} Last index of 0 in x; -1 if absent.                       
+  - @throws TypeError if x is not an array.                                     
+    */                                                                          
+    function lastZero(x)                                                        
+                                                                                
+  Write unit tests with node:test that check this specification.                
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Write(lastZero.test.js)
+  ⎿  Wrote 115 lines to lastZero.test.js
+       1 const { describe, test } = require('node:test');
+       2 const assert = require('node:assert/strict');
+       3 
+       4 // Accept either `module.exports = lastZero` or `module.exports 
+         = { lastZero }`.
+       6 const lastZero = typeof mod === 'function' ? mod : mod.lastZero;
+       7 
+       8 describe('lastZero: returns -1 when 0 is absent', () => {
+       9   test('empty array', () => {
+      10     assert.equal(lastZero([]), -1);
+     … +109 lines (ctrl+o to expand)
+
+⏺ Now let me check the tests against a correct implementation and a few buggy
+  ones (in the scratchpad, not your project).
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+⏺ I wrote 30 unit tests in lastZero.test.js using node:test.
+
+  There is no lastZero.js in the folder yet, so I haven't run the tests against
+  your code. Instead I ran them in a scratch folder against an implementation I
+  wrote to follow the spec, and all 30 passed. I also ran them against four
+  deliberately buggy versions, and each one failed some tests:
+
+  ┌─────────────────────────────────────────────────────┬──────────────┐
+  │                    Buggy version                    │ Tests failed │
+  ├─────────────────────────────────────────────────────┼──────────────┤
+  │ Returns the first 0 instead of the last             │ 3            │
+  ├─────────────────────────────────────────────────────┼──────────────┤
+  │ Never throws for non-arrays                         │ 9            │
+  ├─────────────────────────────────────────────────────┼──────────────┤
+  │ Off-by-one, never checks index 0                    │ 3            │
+  ├─────────────────────────────────────────────────────┼──────────────┤
+  │ Uses == instead of ===, so '0' and false count as 0 │ 3            │
+  └─────────────────────────────────────────────────────┴──────────────┘
+
+  What the tests check:
+  - Returns -1 when there's no 0: empty arrays, arrays with no zeros, NaN, empty
+    slots in a sparse array, and values that only loosely equal 0 ('0', false,
+    null, '', []).
+  - Returns the last index of 0: a 0 at the start, middle or end; several zeros;
+    all zeros; mixed element types; a 0 after empty slots; a 100,000-element
+    array; and that the input array isn't changed.
+  - Throws TypeError: for undefined, null, numbers, strings (including '0'),
+    booleans, plain objects, array-like objects, functions, a Set, and calling
+    it with no argument.
+
+  Two choices where the spec is unclear. Change these tests if you read it
+  differently:
+  - Strict equality: I assumed "0" means the number 0, so '0' and false don't
+    count.
+  - -0: I treated -0 as 0, which is what === does.
+
+  To run: the tests load ./lastZero.js, which can export the function directly
+  or as { lastZero }. Then run:
+  node --test
+
+✻ Brewed for 39s · done 11:16 PM

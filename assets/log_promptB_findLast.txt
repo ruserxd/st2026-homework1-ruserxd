@@ -1,0 +1,76 @@
+ ▐▛███▛█   Claude Code v2.1.288
+▝▜██████▀  Opus 5.5 · Claude Pro
+ ▝▝   ▝▝   ~/hw1-spec
+
+
+❯ /**                                                                           
+  - Find last index of element                                                  
+  -                                                                             
+  - @param {Object[]} x - The array to search.                                  
+  - @param {number} y - The value to look for.                                  
+  -                                                                             
+  - @returns {number} Last index of y in x; -1 if absent.                       
+  - @throws TypeError if x is not an array or y is not a                        
+  - number.                                                                     
+    */                                                                          
+    function findLast(x, y)                                                     
+                                                                                
+  Write unit tests with node:test that check this specification.                
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Write(findLast.test.js)
+  ⎿  Wrote 137 lines to findLast.test.js
+      1 const { describe, it } = require('node:test');
+      2 const assert = require('node:assert/strict');
+      3 const { findLast } = require('./findLast');
+      4 
+      5 describe('findLast: returns last index of y in x', () => {
+      6   it('returns the last index when y occurs multiple times', () =>
+         {
+      7     assert.equal(findLast([1, 2, 3, 2, 1], 2), 3);
+      8     assert.equal(findLast([1, 2, 3, 2, 1], 1), 4);
+      9   });
+     … +134 lines (ctrl+o to expand)
+
+⏺ Let me sanity-check the tests against a reference implementation in the
+  scratchpad, without adding it to your project.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ I wrote 34 tests in findLast.test.js. Your project folder is empty, so the
+  tests expect the function at ./findLast.js, exported as module.exports = { 
+  findLast }. Run them with:
+
+  node --test
+
+  To check the tests themselves, I ran them against a simple version of findLast
+  I wrote in a temporary folder, and all 34 passed. I didn't put that version
+  in your project.
+
+  What the tests cover:
+  - Finding the last index: the value appears several times, once, first, last,
+    or in every position; one-element arrays; zero, negative and decimal
+    numbers; ±Infinity; a 100,000-element array; and a check that the input
+    array isn't changed.
+  - Returning -1: an empty array, no match, a one-element array with no match,
+    and an array with no numbers in it.
+  - TypeError when x isn't an array: undefined, null, a number, a string, a
+    boolean, an object that looks like an array, and a function.
+  - TypeError when y isn't a number: undefined, null, '1', a boolean, {}, [1],
+    and 1n. One test uses an array containing '1' to check that the function
+    rejects '1' rather than matching it, and another uses an empty array.
+    Missing arguments and both arguments invalid also throw.
+
+  Cases the spec doesn't decide, which I tested only loosely or left out:
+  - NaN: it counts as a number, so the tests only check that it doesn't throw.
+    The spec doesn't say whether findLast([NaN], NaN) should return 0 or -1.
+  - How values are compared: the spec doesn't say whether findLast(['2', 2, 
+    '2'], 2) should match the string '2' (giving 2) or not (giving 1), or
+    whether 0 should match -0.
+  - Unusual inputs: typed arrays like Int8Array, number objects like new 
+    Number(1), and arrays with gaps aren't clearly in or out of the spec.
+
+  I can add tests for any of these once you decide what the right behaviour is.
+
+✻ Brewed for 37s · done 11:19 PM

@@ -135,5 +135,44 @@ if (Math.abs(x[i] % 2) === 1 || x[i] > 0) {
     - i = 0，-3 % 2 !== 1，因此 count = 0
 
 ## PartB
+### 第一次
+我是直接在 lab2/ 這份專案下跑 claude code，但發現到他會讀取我在 PEADME.md 寫的 PartA 答案，，因此想到要設置一個乾淨的環境生成測試。
 
-## PartC
+### 前置作業(PromptA)
+為了不讓 claude code 讀到我撰寫好的 README.md PartA 所以需要先創一個空的資料夾，讓他單純透過程式碼生成每個方法的測試案例
+```
+newrun() {
+  rm -rf ~/hw1-run && mkdir ~/hw1-run
+  cp /Users/ruserxd/Desktop/master/SWT/lab2/hw1.js ~/hw1-run/
+  cd ~/hw1-run && ls && claude
+}
+```
+這樣每次只需要在終端機打上 newrun 就會重新生成一個乾淨的環境
+
+### 前置作業(PromptB)
+這次的指令只需要一個空的資料夾，剩下透過 prompt 告訴其規格就好
+```
+newspec() {
+  rm -rf ~/hw1-spec && mkdir ~/hw1-spec
+  cd ~/hw1-spec && ls && claude # 確保資料夾要空的
+}
+```
+這樣每次只需要在終端機打上 newspec 就會重新生成一個乾淨的環境
+
+### 路徑問題
+- Prompt A 的 agent 把測試檔放在根目錄，所以寫成 ./hw1.js。搬進 test/ 之後，路徑要改成 ../hw1.js。
+- Prompt B 的 agent 看不到實作，所以自己猜 ./findLast 這樣形式的路徑。
+
+```
+cd /Users/ruserxd/Desktop/master/SWT/lab2
+perl -i -pe 'if (m{require\(\x27\./hw1(\.js)?\x27\)}) { $o=$_; chomp $o; s{\./hw1(\.js)?}{../hw1.js}; $_ = "// [EDITED by student] original: $o\n$_"; }' test/promptA_*.test.js
+
+grep -n -B1 "require('../hw1.js')" test/promptA_*.test.js
+```
+```
+perl -i -pe 'if (m{require\(\x27\./(findLast|lastZero|countPositive|oddOrPos)(\.js)?\x27\)}) { $o=$_; chomp $o; s{\./(findLast|lastZero|countPositive|oddOrPos)(\.js)?}{../hw1.js}; $_ = "// [EDITED by student] original: $o\n$_"; }' test/promptB_*.test.js
+
+grep -n -B1 "require('../hw1.js')" test/promptB_*.test.js
+```
+### claude code 聊天紀錄
+都存在 assets/ 下，log_promptA_*.txt, log_promptB_*.txt
