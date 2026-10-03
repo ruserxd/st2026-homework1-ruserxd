@@ -1,0 +1,59 @@
+ ▐▛███▛█   Claude Code v2.1.288
+▝▜██████▀  Opus 5.5 · Claude Pro
+ ▝▝   ▝▝   ~/Desktop/master/SWT/lab2/assets/promptA_nodoc
+
+
+❯ function countPositive(x) {                                                   
+      if (!Array.isArray(x)) {                                                  
+          throw new TypeError('Not an array');                                  
+      }                                                                         
+      let count = 0;                                                            
+      for (let i = 0; i < x.length; i++) {                                      
+          if (x[i] >= 0) {                                                      
+              count++;                                                          
+          }                                                                     
+      }                                                                         
+      return count;                                                             
+  }                                                                             
+                                                                                
+  Write unit tests for this function with node:test. Make sure all tests pass.  
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+⏺ Write(countPositive.test.js)
+  ⎿  Wrote 64 lines to countPositive.test.js
+       1 const { test, describe } = require('node:test');
+       2 const assert = require('node:assert/strict');
+       3 const { countPositive } = require('./hw1.js');
+       4 
+       5 describe('countPositive', () => {
+       7         test('throws TypeError for non-array inputs', () => {
+       8             for (const input of [undefined, null, 42, 'abc', {},
+          { length: 2, 0: 1, 1: 2 }]) {
+       9                 assert.throws(() => countPositive(input), {
+      10                     name: 'TypeError',
+     … +60 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ I wrote the tests in countPositive.test.js, which imports countPositive from
+  ./hw1.js. All 11 pass when run with node --test countPositive.test.js.
+
+  They cover:
+  - Input validation: a TypeError with the message 'Not an array' for undefined,
+    null, a number, a string, {} and an object that looks like an array.
+  - Counting: an empty array, all positive, all negative, a mix, single
+    elements, decimals, ±Infinity, MAX_VALUE/MIN_VALUE, NaN (not counted), and a
+    check that the input array isn't changed.
+
+  Zero is counted as positive. The check is x[i] >= 0, so countPositive([-4, 2, 
+  0, 2]) returns 3, not 2, and 0 and -0 are both counted. Zero isn't positive,
+  so this looks like the fault in this function. Because you asked for passing
+  tests, they expect the current behavior: the test counts 0 (current behavior: 
+  condition is x[i] >= 0) locks in what is probably a bug. A test with only the
+  code to go on can't tell a bug from intended behavior, which may be useful for
+  your promptA vs. promptB comparison. If the function should count strictly
+  positive numbers, change the condition to x[i] > 0 and flip those two
+  assertions.
+
+✻ Sautéed for 23s · done 5:20 AM

@@ -149,6 +149,19 @@ newrun() {
 ```
 這樣每次只需要在終端機打上 newrun 就會重新生成一個乾淨的環境
 
+### 前置作業(PromptA 無 JSDoc 版)
+第一輪 PromptA 沒有出現 assertion echo，因為 prompt 和 hw1.js 裡都有 JSDoc 與 `// test: ... Expected` 註解，agent 可以直接拿來當答案。
+所以準備了 `assets/promptA_nodoc/`，裡面的 hw1.js 拿掉了 JSDoc 與註解，prompt 也只貼函式本體
+```
+newrun_nodoc() {
+  rm -rf ~/hw1-run-nodoc && mkdir ~/hw1-run-nodoc
+  cp /Users/ruserxd/Desktop/master/SWT/lab2/assets/promptA_nodoc/hw1.js ~/hw1-run-nodoc/
+  cd ~/hw1-run-nodoc && ls && claude
+}
+```
+這樣每次只需要在終端機打上 newrun_nodoc，再貼上 `prompt_<program>.txt` 的內容即可
+（findLast、lastZero、oddOrPos 是用 `claude -p`，所以 log 格式和其他的不同）
+
 ### 前置作業(PromptB)
 這次的指令只需要一個空的資料夾，剩下透過 prompt 告訴其規格就好
 ```
@@ -176,3 +189,64 @@ grep -n -B1 "require('../hw1.js')" test/promptB_*.test.js
 ```
 ### claude code 聊天紀錄
 都存在 assets/ 下，log_promptA_*.txt, log_promptB_*.txt
+
+### B1 表格
+透過`node --test --experimental-test-coverage --test-coverage-include=hw1.js test/[檔名].test.js`來獲取下方表格資訊
+
+| Program       | Prompt | # tests | # failing     | Line % | Branch % | Fault revealed? |
+|---------------|:------:|--------:|---------------|-------:|---------:|:---------------:|
+| findLast      | A      | 13      | 3             | 100    | 100      | Y               |
+| findLast      | B      | 34      | 2             | 100    | 100      | Y               |
+| lastZero      | A      | 9       | 0 (+1 todo)   | 100    | 100      | N\*             |
+| lastZero      | B      | 30      | 3             | 100    | 100      | Y               |
+| countPositive | A      | 8       | 0 (+1 todo)   | 100    | 100      | N\*             |
+| countPositive | B      | 25      | 5             | 100    | 100      | Y               |
+| oddOrPos      | A      | 8       | 0 (+1 todo)   | 100    | 100      | N\*             |
+| oddOrPos      | B      | 28      | 6             | 100    | 100      | Y               |
+
+A = 第一輪 Prompt A（prompt 內含 JSDoc，且資料夾內 hw1.js 有 JSDoc 與 `// test:` 註解）。
+Line % / Branch % 為該 suite 對受測函式本身的覆蓋率（`node --test --experimental-test-coverage`，未覆蓋行僅屬於其他三個函式）。
+
+\* agent 有寫出能揭露 fault 的測試，但用 `{ todo: ... }` 標記，`node --test` 不把它算進 failing（顯示為 `todo`），因此從測試結果看不到 fault。若移除 `todo`，該測試會失敗。findLast 第一輪的 agent 則是直接修改了 hw1.js 讓測試全過（見 log_promptA_findLast.txt），交給 node 跑原始錯誤程式時才出現 3 個 failing。
+
+
+### B1(a)
+
+拿掉 JSDoc 後，lastZero 與 countPositive 兩份 suite 都出現 assertion echo。
+
+**例 1：`test/promptA_nodoc_lastZero.test.js`**
+```js
+// NOTE: With multiple zeros, the current implementation returns the index of
+// the FIRST zero, not the last. This test documents the current behavior.
+test('lastZero with multiple zeros returns the first zero index (current behavior)', () => {
+    assert.strictEqual(lastZero([0, 1, 0]), 0);
+    assert.strictEqual(lastZero([1, 0, 2, 0, 3]), 1);
+});
+```
+- 依 JSDoc「Last index of 0 in x」，正確 expected 應為 `lastZero([0, 1, 0]) === 2`、`lastZero([1, 0, 2, 0, 3]) === 3`。
+- 今天會過：錯誤程式從 i = 0 往後找，遇到第一個 0 就 return，實際回傳 0 與 1，agent 把這兩個實際輸出直接寫成 expected。
+- 修好後會壞：迴圈改成從尾端往前找，回傳 2 與 3，與寫死的 0、1 不符，這個測試就會失敗（已用 hw1_fixed.js 驗證：1 fail）。
+
+**例 2：`test/promptA_nodoc_countPositive.test.js`**
+```js
+test('counts only the non-negative elements in a mixed array', () => {
+    assert.equal(countPositive([-4, 2, 0, 2]), 3);
+});
+test('counts 0 (current behavior: condition is x[i] >= 0)', () => {
+    assert.equal(countPositive([0]), 1);
+    assert.equal(countPositive([0, 0, 0]), 3);
+});
+```
+- 依 JSDoc「Count of positive elements」，0 不是正數，正確 expected 應為 2、0、0。
+- 今天會過：`x[i] >= 0` 把 0 也算進去，所以實際輸出 3、1、3，agent 照抄。連題目給的失敗測資 `[-4, 2, 0, 2]` 都被寫成 expected = 3，測試名稱也改成「non-negative」去配合程式。
+- 修好後會壞：改成 `x[i] > 0` 之後回傳 2、0、0，三個測試失敗（已驗證：3 fail）。
+
+agent 在 log 中其實有注意到可能是 bug（「locks in what is probably a bug」），但因為 prompt 要求「Make sure all tests pass」，又沒有任何獨立於實作的 oracle，它只能以現有行為當作正確答案。
+
+對照：第一輪 Prompt A 有 JSDoc 與 `// test: ... Expected` 註解可參考，所以 agent 知道正確答案，改用 `todo` 隱藏失敗或直接修改 hw1.js，沒有產生 echo。findLast 與 oddOrPos 在無 JSDoc 版中也從函式名稱與 JS 語意（`i > 0` 跳過 index 0、`-3 % 2 === -1`）自行推論出 bug，同樣用 `todo` 處理。
+
+### B1(b)
+
+覆蓋率兩者相同：Prompt A（兩個版本）與 Prompt B 對每個函式都是 100% line / 100% branch。揭露 fault 則是 Prompt B 較多：四支程式都有測試失敗；Prompt A 只有第一輪 findLast 因 agent 修改程式而意外失敗，其餘都靠 `todo` 或 echo 而全部通過。
+
+Coverage 只代表程式碼「被執行過」，也就是 RIPR 中的 Reachability。fault 所在那一行被跑到，不代表狀態被感染（countPositive 若沒有 0 的輸入，`>=` 與 `>` 結果相同），也不代表錯誤傳到輸出，更不代表斷言檢查的是正確的值。Prompt A 的 oracle 來自程式本身，即使輸入觸發了 fault、錯誤值也傳到回傳值，echo 的 expected 與錯誤輸出一致，測試仍然通過。Prompt B 的 oracle 來自規格，與實作獨立，所以在相同覆蓋率下能揭露 fault。
