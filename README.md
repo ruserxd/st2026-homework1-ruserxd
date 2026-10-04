@@ -21,9 +21,8 @@
 - 測資：x = [1, 2, 3]，y = 4
 - Expected = -1, Actual = -1
 
-
 (e) 針對 (d)，描述錯誤狀態
-- 第一個 error state：x = [1, 2, 3]，y = 4，i = 0，PC 指向 `return -1`
+- 第一個 error state：x = [1, 2, 3]，y = 4，i = 0，PC 指向 `return -1`，回傳值：尚未產生
 - 正確程式此時應為：PC 指向 `if (x[i] === y) {`
 - 過程：
   - i = 2 時，3 !== 4 所以繼續做下去
@@ -52,8 +51,8 @@
 
 (e) 針對 (d)，描述錯誤狀態
 - 說明：有成功的找到 x[2] 是 0 並回傳 2，雖然實際與預期的回傳值仍然是相同的，但是迴圈的順序反了，所以狀態會錯誤。
-- 第一個 error state：x = [1, 2, 0]，i = 0，PC 指向 `if (x[i] === 0)`
-- 正確程式此時應為：i = 2（PC 同樣指向 `if (x[i] === 0)`）
+- 第一個 error state：x = [1, 2, 0]，i = 0，PC 指向迴圈條件 `i < x.length`，回傳值：尚未產生
+- 正確程式此時應為：i = 2（PC 指向迴圈條件 `i >= 0`）
 - 過程：
   - 有 bug 的迴圈是從 i = 0 開始
     - i = 0，1 !== 0
@@ -83,7 +82,7 @@
 - Expected = 2, Actual = 3
 
 (e) 針對 (d)，描述錯誤狀態
-- 第一個 error state：x = [-4, 2, 0, 2]，i = 2，count = 1，PC 指向 `count++`
+- 第一個 error state：x = [-4, 2, 0, 2]，i = 2，count = 1，PC 指向 `count++`，回傳值：尚未產生
 - 正確程式此時應為：PC 指向 `i++`
 - 過程：
   - x[i] >= 0 時（count = 0）
@@ -127,7 +126,7 @@ if (Math.abs(x[i] % 2) === 1 || x[i] > 0) {
 - Expected = 3, Actual = 2
 
 (e) 針對 (d)，描述錯誤狀態
-- 第一個 error state：x = [-3, -2, 0, 1, 4]，i = 0，count = 0，PC 指向 `i++`
+- 第一個 error state：x = [-3, -2, 0, 1, 4]，i = 0，count = 0，PC 指向 `i++`，回傳值：尚未產生
 - 正確程式此時應為：PC 指向 `count++`
 - 說明：錯誤在 i = 0 時，就出現了
 - 過程：
@@ -136,7 +135,7 @@ if (Math.abs(x[i] % 2) === 1 || x[i] > 0) {
 
 ## PartB
 ### 第一次
-我是直接在 lab2/ 這份專案下跑 claude code，但發現到他會讀取我在 PEADME.md 寫的 PartA 答案，，因此想到要設置一個乾淨的環境生成測試。
+我是直接在 lab2/ 這份專案下跑 claude code，但發現到他會讀取我在 README.md 寫的 PartA 答案，因此想到要設置一個乾淨的環境生成測試。
 
 ### 前置作業(PromptA)
 為了不讓 claude code 讀到我撰寫好的 README.md PartA 所以需要先創一個空的資料夾，讓他單純透過程式碼生成每個方法的測試案例
@@ -188,33 +187,47 @@ perl -i -pe 'if (m{require\(\x27\./(findLast|lastZero|countPositive|oddOrPos)(\.
 grep -n -B1 "require('../hw1.js')" test/promptB_*.test.js
 ```
 ### claude code 聊天紀錄
-都存在 assets/ 下，log_promptA_*.txt, log_promptB_*.txt
+都存在 assets/log/ 下：log_promptA_*.txt、log_promptA_noDoc_*.txt、log_promptB_*.txt、log_B3_lastZero.txt
 
-### B1 表格
-透過`node --test --experimental-test-coverage --test-coverage-include=hw1.js test/[檔名].test.js`來獲取下方表格資訊
+### 測試檔與 log 對照
+| 版本 | 測試檔 | log |
+|---|---|---|
+| Prompt A（無 JSDoc，B1 表格採用） | `test/promptA_<program>.test.js` | `assets/log/log_promptA_noDoc_<program>.txt` |
+| Prompt A 第一輪（含 JSDoc 與 `// test:` 註解） | `test/promptA_firstrun_<program>.test.js` | `assets/log/log_promptA_<program>.txt` |
+| Prompt B | `test/promptB_<program>.test.js` | `assets/log/log_promptB_<program>.txt` |
+| B3（lastZero 的 Part A 問答） | — | `assets/log/log_B3_lastZero.txt` |
+
+### B1
+
+#### B1 表格
+```
+node --test --experimental-test-coverage --test-coverage-include=hw1.js test/promptA_lastZero.test.js
+```
 
 | Program       | Prompt | # tests | # failing     | Line % | Branch % | Fault revealed? |
 |---------------|:------:|--------:|---------------|-------:|---------:|:---------------:|
-| findLast      | A      | 13      | 3             | 100    | 100      | Y               |
+| findLast      | A      | 16      | 0 (+2 todo)   | 100    | 100      | N\*             |
 | findLast      | B      | 34      | 2             | 100    | 100      | Y               |
-| lastZero      | A      | 9       | 0 (+1 todo)   | 100    | 100      | N\*             |
+| lastZero      | A      | 7       | 0             | 100    | 100      | N (echo)        |
 | lastZero      | B      | 30      | 3             | 100    | 100      | Y               |
-| countPositive | A      | 8       | 0 (+1 todo)   | 100    | 100      | N\*             |
+| countPositive | A      | 11      | 0             | 100    | 100      | N (echo)        |
 | countPositive | B      | 25      | 5             | 100    | 100      | Y               |
-| oddOrPos      | A      | 8       | 0 (+1 todo)   | 100    | 100      | N\*             |
+| oddOrPos      | A      | 12      | 0 (+1 todo)   | 100    | 100      | N\*             |
 | oddOrPos      | B      | 28      | 6             | 100    | 100      | Y               |
 
-A = 第一輪 Prompt A（prompt 內含 JSDoc，且資料夾內 hw1.js 有 JSDoc 與 `// test:` 註解）。
+A = Prompt A 無 JSDoc 版（`test/promptA_*.test.js`，prompt 只貼函式本體，資料夾內 hw1.js 也拿掉 JSDoc 與 `// test:` 註解）。
 Line % / Branch % 為該 suite 對受測函式本身的覆蓋率（`node --test --experimental-test-coverage`，未覆蓋行僅屬於其他三個函式）。
 
-\* agent 有寫出能揭露 fault 的測試，但用 `{ todo: ... }` 標記，`node --test` 不把它算進 failing（顯示為 `todo`），因此從測試結果看不到 fault。若移除 `todo`，該測試會失敗。findLast 第一輪的 agent 則是直接修改了 hw1.js 讓測試全過（見 log_promptA_findLast.txt），交給 node 跑原始錯誤程式時才出現 3 個 failing。
+\* agent 從程式本身推論出 bug，寫出能揭露 fault 的測試，但用 `{ todo: ... }` 標記，`node --test` 不把它算進 failing（顯示為 `todo`），因此從測試結果看不到 fault。若移除 `todo`，該測試會失敗。
+
+(echo) 測試把錯誤程式的實際輸出寫成 expected，所以全部通過，詳見 B1(a)。
 
 
-### B1(a)
+#### B1(a)
 
 拿掉 JSDoc 後，lastZero 與 countPositive 兩份 suite 都出現 assertion echo。
 
-**例 1：`test/promptA_nodoc_lastZero.test.js`**
+**例 1：`test/promptA_lastZero.test.js`**
 ```js
 // NOTE: With multiple zeros, the current implementation returns the index of
 // the FIRST zero, not the last. This test documents the current behavior.
@@ -227,7 +240,7 @@ test('lastZero with multiple zeros returns the first zero index (current behavio
 - 今天會過：錯誤程式從 i = 0 往後找，遇到第一個 0 就 return，實際回傳 0 與 1，agent 把這兩個實際輸出直接寫成 expected。
 - 修好後會壞：迴圈改成從尾端往前找，回傳 2 與 3，與寫死的 0、1 不符，這個測試就會失敗（已用 hw1_fixed.js 驗證：1 fail）。
 
-**例 2：`test/promptA_nodoc_countPositive.test.js`**
+**例 2：`test/promptA_countPositive.test.js`**
 ```js
 test('counts only the non-negative elements in a mixed array', () => {
     assert.equal(countPositive([-4, 2, 0, 2]), 3);
@@ -245,8 +258,145 @@ agent 在 log 中其實有注意到可能是 bug（「locks in what is probably 
 
 對照：第一輪 Prompt A 有 JSDoc 與 `// test: ... Expected` 註解可參考，所以 agent 知道正確答案，改用 `todo` 隱藏失敗或直接修改 hw1.js，沒有產生 echo。findLast 與 oddOrPos 在無 JSDoc 版中也從函式名稱與 JS 語意（`i > 0` 跳過 index 0、`-3 % 2 === -1`）自行推論出 bug，同樣用 `todo` 處理。
 
-### B1(b)
+#### B1(b)
+兩者覆蓋率相同（皆 100% line／branch），但只有 Prompt B 揭露 fault，Prompt A 全部通過。Coverage 只保證 fault 那行被執行（Reachability），不保證狀態被感染、錯誤傳到輸出，或斷言的 expected 正確。Prompt A 的 oracle 來自程式本身，agent 把錯誤輸出寫成 expected 或用 todo 隱藏失敗；Prompt B 的 oracle 來自規格，獨立於實作，才能揭露 fault。
 
-覆蓋率兩者相同：Prompt A（兩個版本）與 Prompt B 對每個函式都是 100% line / 100% branch。揭露 fault 則是 Prompt B 較多：四支程式都有測試失敗；Prompt A 只有第一輪 findLast 因 agent 修改程式而意外失敗，其餘都靠 `todo` 或 echo 而全部通過。
+### B2
 
-Coverage 只代表程式碼「被執行過」，也就是 RIPR 中的 Reachability。fault 所在那一行被跑到，不代表狀態被感染（countPositive 若沒有 0 的輸入，`>=` 與 `>` 結果相同），也不代表錯誤傳到輸出，更不代表斷言檢查的是正確的值。Prompt A 的 oracle 來自程式本身，即使輸入觸發了 fault、錯誤值也傳到回傳值，echo 的 expected 與錯誤輸出一致，測試仍然通過。Prompt B 的 oracle 來自規格，與實作獨立，所以在相同覆蓋率下能揭露 fault。
+#### B2(a)
+
+| Program       | Test (quote the call and the assertion) | First condition not met (R / I / P / Reveal) | Justification |
+|---------------|-----------------------------------------|:--------------------------------------------:|---------------|
+| findLast      | A：`assert.strictEqual(findLast([1, 2, 3], 4), -1)`（`test/promptA_findLast.test.js`，"returns -1 when the value is not present"） | P | R：有跑到迴圈條件 `i > 0`。I：i = 2、1 時 3、2 皆 !== 4；到 i = 0 時錯誤程式判斷 `0 > 0` 為 false，PC 跳到 `return -1`，正確程式（`i >= 0`）此時 PC 應在 `if (x[i] === y)` 再檢查 x[0] = 1，狀態已被感染（同 PartA (d)(e)）。P 不成立：x[0] = 1 !== 4，正確程式最後也是 `return -1`，兩者回傳值都是 -1，錯誤狀態沒有傳到輸出。 |
+| lastZero      | A：`assert.throws(() => lastZero(null), { name: 'TypeError', message: 'Not an array' })`（`test/promptA_lastZero.test.js`） | R | fault 在迴圈的起點與方向 `for (let i = 0; i < x.length; i++)`。x = null，`Array.isArray(null)` 為 false，直接拋出 TypeError('Not an array')，迴圈的 `let i = 0` 從未執行，i 也從未被賦值，沒有回傳值，所以連 Reachability 都沒有滿足。 |
+| countPositive | B：`assert.equal(typeof countPositive([1, -1]), 'number')`（`test/promptB_countPositive.test.js`，"returns a number"） | I | R：x = [1, -1] 是陣列，進入迴圈並執行到 `if (x[i] >= 0)`。I 不成立：i = 0 時 1 >= 0 與 1 > 0 都為 true，count = 1；i = 1 時 -1 >= 0 與 -1 > 0 都為 false，count 仍為 1。陣列中沒有 0，所以每一步的 i、count 與 PC 都和正確程式相同，最後回傳 1（正確也是 1），狀態從未被感染。 |
+| oddOrPos      | hand-written：`const r = oddOrPos([-3, -2, 0, 1, 4]); assert.ok(Number.isInteger(r))`（`test/mine_reveal_oddOrPos.test.js`） | Reveal | R：進入迴圈並執行 `x[i] % 2 === 1 \|\| x[i] > 0`。I：i = 0 時 x[0] = -3，`-3 % 2` 為 -1，`-1 === 1` 為 false 且 -3 > 0 也為 false，PC 跳過 `count++`，count = 0；正確程式應執行 `count++` 使 count = 1，狀態已被感染。P：後續 -2、0 不計，1、4 計入，錯誤程式回傳 r = 2，正確應為 3，錯誤值傳到回傳值。Reveal 不成立：斷言只檢查 r 是不是整數，`Number.isInteger(2)` 為 true，測試通過，沒有看到 2 與 3 的差別。 |
+
+agent 產生的測試中沒有停在 Reveal 的例子：Prompt B 的「回傳型別」測試（`typeof oddOrPos([1, 2, 3])`、`typeof countPositive([1, -1])`）輸入裡沒有負奇數或 0，根本沒有感染狀態，停在 I。所以 oddOrPos 這一列是自己寫的測試，放在 `test/mine_reveal_oddOrPos.test.js`，執行結果為 1 pass、0 fail。
+
+#### B2(b)
+
+不滿足。Reveal 要求測試者觀察到最終狀態中「錯誤」的部分，並且把它認定為錯誤。echo 斷言 `assert.equal(countPositive([-4, 2, 0, 2]), 3)` 雖然讀到了錯誤的回傳值 3，但 expected 本身就是從錯誤程式複製來的，oracle 跟實作一起錯，所以它把錯誤值當成正確值，永遠不會失敗。斷言有看到錯誤的值，但沒有能力判斷它是錯的，fault 沒有被揭露。Reveal 需要獨立於實作的 oracle（規格、參考實作或性質）；echo 只是把 failure 寫進了測試。
+
+### B3
+
+#### B3(a)
+
+| 題目 | agent 的答案 | 評分 | 測資 | Expected（依規格） | Actual（實際執行） | 理由 |
+|---|---|:---:|---|---|---|---|
+| (a) | 從前面開始找，改成從尾端往前找 | Correct | x = [0, 1, 0] | 2 | 0 | 跟我的答案一致 |
+| (b) | x = null | Correct | x = null | TypeError: Not an array | TypeError: Not an array | 非陣列，在進入迴圈前就拋出例外 |
+| (c) | x = [1] | Incorrect | x = [1] | -1 | -1 | 見下方說明 |
+| (d) | x = [0, 1] | Correct | x = [0, 1] | 0 | 0 | 錯誤程式的 i 從 0 開始，正確程式從 1 開始，最後都回傳 0 |
+| (e) | i = 0，PC 在迴圈條件 | Correct | — | — | — | 四項都有寫到，見 B3(b) |
+
+Expected / Actual 的驗證指令：
+```
+node -e "const {lastZero}=require('./hw1.js'); for (const x of [null,[1],[0,1],[0,1,0]]) { try { console.log(JSON.stringify(x), '->', lastZero(x)); } catch (e) { console.log(JSON.stringify(x), '->', e.name + ': ' + e.message); } }"
+```
+
+**(c) 的逐步追蹤（x = [1]）**
+
+| 步驟 | 錯誤程式 | 正確程式 |
+|---|---|---|
+| 初始化 | i = 0 | i = 0 |
+| 檢查 x[0] | 1 !== 0 | 1 !== 0 |
+| 更新 | `i++` → i = 1 | `i--` → i = -1 |
+| 條件判斷 | 1 < 1 為 false | -1 >= 0 為 false |
+| 回傳 | -1 | -1 |
+在迴圈對 i 的操作並不相同，因此造成兩者狀態上的不同。
+
+#### B3(b)
+
+| 項目 | agent 有寫嗎？ | 對不對？ |
+|---|:---:|:---:|
+| x | 有 | 對|
+| i | 有（0，正確程式為 1） | 對 |
+| 回傳值 | 有（not set yet） | 對 |
+| PC | 有（迴圈條件） | 對 |
+
+有詳細列出 x, i, PC, return value，沒有錯誤，和 PartA 所寫的判斷是一樣的，PC 都指向迴圈的判定 (i < x.length, i >= 0)
+
+#### B3(c)
+追問的 prompt：
+```
+請針對你在(c)提出的測資，把錯誤程式和修正後的程式都逐行追蹤一遍，包含迴圈的更新步驟。每執行完一個敘述，就比較兩邊所有變數的值。兩邊的狀態有沒有在任何時候出現差異？
+```
+
+結果:
+agent 一開始沒有發現到，所給的測資並沒有符合 (c) 的題目要求，兩者的 i 更新的不同，一邊是 i++，另一邊是 i--，經過再一次的 prompt，他有發現到 x = [1] 時，有出現錯誤狀態，後來有提出要使用與我在PartA 寫的 x = [0] 當測資，才不會有錯誤狀態的出現，新的測資就有符合 (c) 的要求。
+- 輸入：x = [0]
+- 預期輸出：0
+- 實際輸出：0
+
+### B4
+- metamorphic relation(oddOrPos)
+  - 依據 test/mine_B4.test.js 進行測試
+      - 
+      ```js
+      const { test } = require('node:test');
+      const assert = require('node:assert/strict');
+      const { oddOrPos } = require('../hw1.js');
+
+      const cases = [
+        { x: [], v: -1 },
+        { x: [2, 4, 6], v: -3 },
+        { x: [1, 3, 5], v: 4},
+        { x: [0, 5, 6], v: 0}
+      ];
+
+      for (const { x, v } of cases) {
+        test(`append ${v} to ${JSON.stringify(x)}`, () => {
+          const before = oddOrPos(x);
+          const after = oddOrPos([...x, v]);
+          const delta = (Math.abs(v % 2) === 1) || v > 0;
+          
+          assert.equal(after, before + delta);
+        });
+      }
+      ```
+  - 如果 v 是一個奇數或是正數，則 oddOrPos([...x, v]) 應該等於 oddOrPos(x) + 1，否則應該等於 oddOrPos(x)
+  - 結果是 pass 過兩個 fail 兩個，fail的測資分別為
+    - Expected 是指 before + delta, Actual 則是 after
+    - x: [], v: -1 ， Expected: 1,Actual: 0
+    - x: [2, 4, 6], v: -3 ， Expected: 4,Actual: 3
+  - 把 `const { oddOrPos } = require('../assets/hw1_fixed.js');` 改成這樣，正確版本的可以通過全部的測試資料。
+    ```
+    ➜lab2 git:(main) ✗ node --test test/mine_B4.test.js                                                  
+    ✔ append -1 to [] (0.360709ms)
+    ✔ append -3 to [2,4,6] (0.056125ms)
+    ✔ append 4 to [1,3,5] (0.04075ms)
+    ✔ append 0 to [0,5,6] (0.034ms)
+    ℹ tests 4
+    ℹ suites 0
+    ℹ pass 4
+    ℹ fail 0
+    ℹ cancelled 0
+    ℹ skipped 0
+    ℹ todo 0
+    ℹ duration_ms 35.061041
+    ```
+
+### B5
+
+1. RIPR 前三項，agent 都能很好的達到，但是最後一項的 Reveal，會因為擁有的資訊而測錯了，例如Prompt A，只看到程式碼，因此生成出的 Expected 值有可能就會遵循著錯誤的程式碼生成，又或是因為使用者所下的 prompt，例如:"Make sure all tests pass"，而造成 agents 寫的是 todo。echo 是 oracle 錯了，todo 是 oracle 對了，但失敗被隱藏，兩者都卡在 Reveal 無法達成。
+
+2. 
+  - Specification：像 Prompt B 那樣只給 agent JSDoc，四個程式都抓到了 fault。
+  - Metamorphic relation：這是在 B4 上有使用的。例如：oddOrPos(x) = c，那在陣列 x 後面如果加上一個奇數或正數，預期值要是 c + 1，否則不變。
+
+### Bonus (optional): mutation testing
+```
+cd /Users/ruserxd/Desktop/master/SWT/lab2
+for f in test/promptA_oddOrPos.test.js test/promptB_oddOrPos.test.js; do
+  echo "== $f"
+  NODE_OPTIONS="--require $PWD/assets/use_fixed.js" node --test "$f" 2>&1 | grep -E "^. (pass|fail) "
+done
+```
+
+### AI 使用
+使用的工具
+- claude code model:Opus 5.5
+- claude version：2.1.289 (Claude Code)
+- 日期:2026/10/1-2026/10/4
+- 聊天紀錄都存在 assets/log 內

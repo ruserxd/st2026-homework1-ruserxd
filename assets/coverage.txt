@@ -1,0 +1,56 @@
+===== test/promptA_findLast
+ℹ tests 16
+ℹ pass 14
+ℹ fail 0
+ℹ todo 2
+ℹ file      | line % | branch % | funcs % | uncovered lines
+ℹ hw1.js    |  61.96 |   100.00 |   25.00 | 35-45 56-67 78-89
+===== test/promptA_lastZero
+ℹ tests 7
+ℹ pass 7
+ℹ fail 0
+ℹ todo 0
+ℹ file      | line % | branch % | funcs % | uncovered lines
+ℹ hw1.js    |  58.70 |   100.00 |   25.00 | 11-24 56-67 78-89
+===== test/promptA_countPositive
+ℹ tests 11
+ℹ pass 11
+ℹ fail 0
+ℹ todo 0
+ℹ file      | line % | branch % | funcs % | uncovered lines
+ℹ hw1.js    |  59.78 |   100.00 |   25.00 | 11-24 35-45 78-89
+===== test/promptA_oddOrPos
+ℹ tests 12
+ℹ pass 11
+ℹ fail 0
+ℹ todo 1
+ℹ file      | line % | branch % | funcs % | uncovered lines
+ℹ hw1.js    |  59.78 |   100.00 |   25.00 | 11-24 35-45 56-67
+===== test/promptB_findLast
+ℹ tests 34
+ℹ pass 32
+ℹ fail 2
+ℹ todo 0
+ℹ file      | line % | branch % | funcs % | uncovered lines
+ℹ hw1.js    |  61.96 |   100.00 |   25.00 | 35-45 56-67 78-89
+===== test/promptB_lastZero
+ℹ tests 30
+ℹ pass 27
+ℹ fail 3
+ℹ todo 0
+ℹ file      | line % | branch % | funcs % | uncovered lines
+ℹ hw1.js    |  58.70 |   100.00 |   25.00 | 11-24 56-67 78-89
+===== test/promptB_countPositive
+ℹ tests 25
+ℹ pass 20
+ℹ fail 5
+ℹ todo 0
+ℹ file      | line % | branch % | funcs % | uncovered lines
+ℹ hw1.js    |  59.78 |   100.00 |   25.00 | 11-24 35-45 78-89
+===== test/promptB_oddOrPos
+ℹ tests 28
+ℹ pass 22
+ℹ fail 6
+ℹ todo 0
+ℹ file      | line % | branch % | funcs % | uncovered lines
+ℹ hw1.js    |  59.78 |   100.00 |   25.00 | 11-24 35-45 56-67
