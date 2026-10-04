@@ -1,0 +1,27 @@
+{
+  "name": "lab2",
+  "version": "1.0.0",
+  "description": "(a) 指出錯在哪裡，並提出修改方式 - 錯誤：i > 0 就停止，所以不會跑到 i == 0 的時候。 - 修改：應改成 `for (let i = x.length - 1; i >= 0; i--)`。",
+  "main": "hw1.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruserxd/nycu-swt-lab2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ruserxd/nycu-swt-lab2/issues"
+  },
+  "homepage": "https://github.com/ruserxd/nycu-swt-lab2#readme",
+  "devDependencies": {
+    "@stryker-mutator/core": "^10.0.0"
+  }
+}

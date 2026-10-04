@@ -1,0 +1,10 @@
+{
+  "testRunner": "command",
+  "commandRunner": {
+    "command": "NODE_OPTIONS='--require ./assets/use_fixed.js' node --test test/promptB_findLast.test.js"
+  },
+  "mutate": ["assets/hw1_fixed.js:4-17"],
+  "coverageAnalysis": "off",
+  "reporters": ["clear-text", "html"],
+  "htmlReporter": { "fileName": "reports/mutation/promptB_findLast.html" }
+}

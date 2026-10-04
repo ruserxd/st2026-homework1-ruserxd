@@ -1,0 +1,29 @@
+[32m22:27:26 (83685) INFO ProjectReader[39m Found 1 of 44 file(s) to be mutated.
+[32m22:27:26 (83685) INFO Instrumenter[39m Instrumented 1 source file(s) with 23 mutant(s)
+[32m22:27:26 (83685) INFO ConcurrencyTokenProvider[39m Creating 11 test runner process(es).
+[32m22:27:27 (83685) INFO DryRunExecutor[39m Starting initial test run (command test runner with "off" coverage analysis). This may take a while.
+[32m22:27:27 (83685) INFO DryRunExecutor[39m Initial test run succeeded. Ran 1 tests in 0 seconds (net 64 ms, overhead 0 ms).
+
+All tests
+  ✓ All tests (killed 19)
+
+[Survived] ArithmeticOperator
+assets/hw1_fixed.js:11:16
+-     for (let i = x.length - 1; i >= 0; i--) { // fixed: i > 0 -> i >= 0
++     for (let i = x.length + 1; i >= 0; i--) { // fixed: i > 0 -> i >= 0
+
+[Survived] EqualityOperator
+assets/hw1_fixed.js:11:30
+-     for (let i = x.length - 1; i >= 0; i--) { // fixed: i > 0 -> i >= 0
++     for (let i = x.length - 1; i > 0; i--) { // fixed: i > 0 -> i >= 0
+
+Ran 0.91 tests per mutant on average.
+--------------|------------------|----------|-----------|------------|----------|----------|
+              | % Mutation score |          |           |            |          |          |
+File          |  total | covered | # killed | # timeout | # survived | # no cov | # errors |
+--------------|--------|---------|----------|-----------|------------|----------|----------|
+All files     |  91.30 |   91.30 |       19 |         2 |          2 |        0 |        0 |
+ hw1_fixed.js |  91.30 |   91.30 |       19 |         2 |          2 |        0 |        0 |
+--------------|--------|---------|----------|-----------|------------|----------|----------|
+[32m22:27:32 (83685) INFO HtmlReporter[39m Your report can be found at: file:///Users/ruserxd/Desktop/master/SWT/lab2/reports/mutation/promptA_findLast.html
+[32m22:27:32 (83685) INFO MutationTestExecutor[39m Done in 5 seconds.

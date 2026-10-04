@@ -1,6 +1,6 @@
 # nycu-swt-lab2
 
-## PartA 手動分析四塊程式碼的問題
+## Part A 手動分析四塊程式碼的問題
 
 ### 1 findLast
 
@@ -14,7 +14,7 @@
 
 (c) 找出一個「有執行到 fault，但狀態沒變錯」的測資
 - 測資：x = [1, 2, 3]，y = 3
-- 理由：這個測試有執行到 fault 的部分 (i > 0) 的 for 迴圈判斷，但是如果我們改成 i >= 0 時，一樣會在 i = 2 時就提早 return 2，所以回傳都是 2 符合預期的結果。
+- 理由：這個測試有執行到 fault 的部分（i > 0）的 for 迴圈判斷，但是如果我們改成 i >= 0 時，一樣會在 i = 2 時就提早 return 2，所以回傳都是 2，符合預期的結果。
 - Expected = 2, Actual = 2
 
 (d) 找出一個「狀態有變錯，但最後輸出剛好是對的」的測資
@@ -25,23 +25,23 @@
 - 第一個 error state：x = [1, 2, 3]，y = 4，i = 0，PC 指向 `return -1`，回傳值：尚未產生
 - 正確程式此時應為：PC 指向 `if (x[i] === y) {`
 - 過程：
-  - i = 2 時，3 !== 4 所以繼續做下去
-  - i = 1 時，2 !== 4 所以繼續做下去
-  - i = 0 時，因為判斷式的不同當前的判斷不會跑到陣列為 [0] 的位置，而 i >= 0 的則會多判斷一次 1 != 4，雖然輸出的結果都為 -1
+  - i = 2 時，3 !== 4，所以繼續做下去
+  - i = 1 時，2 !== 4，所以繼續做下去
+  - i = 0 時，因為判斷式的不同，當前的判斷不會跑到陣列為 [0] 的位置，而 i >= 0 的則會多判斷一次 1 != 4，雖然輸出的結果都為 -1。
 
 ### 2 lastZero
 
 (a) 指出錯在哪裡，並提出修改方式
 - 錯誤：錯在他是從 i = 0 開始，但是方法期望回傳的是最後一個 idx，所以假設當出現兩個 0 在陣列時，會先輸出前面的而非後者。
-- 修改：程式碼應改成 `for (let i = x.length - 1; i >= 0; i--)`
+- 修改：程式碼應改成 `for (let i = x.length - 1; i >= 0; i--)`。
 
 (b) 找出一個「完全不會執行到 fault」的測資
 - 測資：x = 1
-- 理由：因為 input 非 array 所以會直接拋出 TypeError('Not an array')，不會經歷 for 迴圈
+- 理由：因為 input 非 array，所以會直接拋出 TypeError('Not an array')，不會經歷 for 迴圈。
 
 (c) 找出一個「有執行到 fault，但狀態沒變錯」的測資
 - 測資：x = [0]
-- 理由：因為陣列的大小為 1，所以不管怎樣 i 都從 0 開始，因為 x[0] === 0，所以會直接回傳 0
+- 理由：因為陣列的大小為 1，所以不管怎樣 i 都從 0 開始，因為 x[0] === 0，所以會直接回傳 0。
 - Expected = 0, Actual = 0
 
 (d) 找出一個「狀態有變錯，但最後輸出剛好是對的」的測資
@@ -57,15 +57,15 @@
   - 有 bug 的迴圈是從 i = 0 開始
     - i = 0，1 !== 0
     - i = 1，2 !== 0
-    - i = 2，發現 0 === 0 回傳 2
+    - i = 2，發現 0 === 0，回傳 2
   - 而正確的迴圈是要從 i = 2 開始
-    - i = 2，第一次就發現 0 === 0 回傳 2
+    - i = 2，第一次就發現 0 === 0，回傳 2
 
 ### 3 countPositive
 
 (a) 指出錯在哪裡，並提出修改方式
-- 錯誤：for 迴圈裡面，判斷是否為 Positive 寫錯了，0 不是正數
-- 修改：應改成 `if (x[i] > 0)`
+- 錯誤：for 迴圈裡面，判斷是否為 Positive 寫錯了，0 不是正數。
+- 修改：應改成 `if (x[i] > 0)`。
 
 (b) 找出一個「完全不會執行到 fault」的測資
 - 測資：x = 1
@@ -78,7 +78,7 @@
 
 (d) 找出一個「狀態有變錯，但最後輸出剛好是對的」的測資
 - 結論：不可能經歷狀態有變錯，但最後輸出可以是對的情況。
-- 理由：一但 x[i] = 0 判斷要 count++ 就無法再將結果倒退回去，以 [-4, 2, 0, 2] 為測資範例
+- 理由：一但 x[i] = 0 被判斷要 count++，就無法再將結果倒退回去，以 [-4, 2, 0, 2] 為測資範例。
 - Expected = 2, Actual = 3
 
 (e) 針對 (d)，描述錯誤狀態
@@ -97,13 +97,13 @@
     - i = 2，因為 0 <= 0，count = 1
     - i = 3，因為 2 > 0，count = 2
     - return 2
-- 說明：在 i = 2 的情況，兩者的 count 計算結果不同，也造成了最後的預期結果與實際不同
+- 說明：在 i = 2 的情況，兩者的 count 計算結果不同，也造成了最後的預期結果與實際不同。
 
 ### 4 oddOrPos
 
 (a) 指出錯在哪裡，並提出修改方式
-- 錯誤：for 迴圈裡面，判斷是否為 odd 寫錯了，沒有考慮到出現負數且奇數的情況，例如：-3, -1
-- 修改：for 迴圈內的判斷式應改成 `Math.abs(x[i] % 2) === 1`，當出現負數的奇數數字時，才能判斷是否為 odd
+- 錯誤：for 迴圈裡面，判斷是否為 odd 寫錯了，沒有考慮到出現負數且奇數的情況，例如：-3、-1。
+- 修改：for 迴圈內的判斷式應改成 `Math.abs(x[i] % 2) === 1`，當出現負數的奇數數字時，才能判斷是否為 odd。
 
 ```js
 if (Math.abs(x[i] % 2) === 1 || x[i] > 0) {
@@ -117,28 +117,28 @@ if (Math.abs(x[i] % 2) === 1 || x[i] > 0) {
 
 (c) 找出一個「有執行到 fault，但狀態沒變錯」的測資
 - 測資：x = [-4, 1, 2, 3]
-- 理由：雖然原始的程式碼有執行到 x[i] % 2 === 1，但是因為 -4 本身就不是奇數，所以並不會影響狀態（-4 % 2 !== 1 且 Math.abs(-4 % 2) !== 1）以及 Expected 跟 Actual 的結果
+- 理由：雖然原始的程式碼有執行到 x[i] % 2 === 1，但是因為 -4 本身就不是奇數，所以並不會影響狀態（-4 % 2 !== 1 且 Math.abs(-4 % 2) !== 1）以及 Expected 跟 Actual 的結果。
 - Expected = 3, Actual = 3
 
 (d) 找出一個「狀態有變錯，但最後輸出剛好是對的」的測資
-- 結論：不可能
+- 結論：不可能。
 - 理由：如果 x[i] % 2 === 1 因為是負數的奇數被判斷為 false，那後面的 x[i] > 0 也必定為 false，這會造成 count 沒有加上一，後續也沒有任何判斷把缺少的再補上，因而造成輸出結果錯誤，以 [-3, -2, 0, 1, 4] 為測資範例。
 - Expected = 3, Actual = 2
 
 (e) 針對 (d)，描述錯誤狀態
 - 第一個 error state：x = [-3, -2, 0, 1, 4]，i = 0，count = 0，PC 指向 `i++`，回傳值：尚未產生
 - 正確程式此時應為：PC 指向 `count++`
-- 說明：錯誤在 i = 0 時，就出現了
+- 說明：錯誤在 i = 0 時就出現了。
 - 過程：
   - 錯誤的程式碼
     - i = 0，-3 % 2 !== 1，因此 count = 0
 
-## PartB
+## Part B
 ### 第一次
-我是直接在 lab2/ 這份專案下跑 claude code，但發現到他會讀取我在 README.md 寫的 PartA 答案，因此想到要設置一個乾淨的環境生成測試。
+我是直接在 lab2/ 這份專案下跑 Claude Code，但發現到他會讀取我在 README.md 寫的 PartA 答案，因此想到要設置一個乾淨的環境生成測試。
 
-### 前置作業(PromptA)
-為了不讓 claude code 讀到我撰寫好的 README.md PartA 所以需要先創一個空的資料夾，讓他單純透過程式碼生成每個方法的測試案例
+### 前置作業（Prompt A）
+為了不讓 Claude Code 讀到我撰寫好的 README.md Part A，所以需要先創一個空的資料夾，讓他單純透過程式碼生成每個方法的測試案例
 ```
 newrun() {
   rm -rf ~/hw1-run && mkdir ~/hw1-run
@@ -146,11 +146,11 @@ newrun() {
   cd ~/hw1-run && ls && claude
 }
 ```
-這樣每次只需要在終端機打上 newrun 就會重新生成一個乾淨的環境
+這樣每次只需要在終端機打上 newrun 就會重新生成一個乾淨的環境。
 
-### 前置作業(PromptA 無 JSDoc 版)
-第一輪 PromptA 沒有出現 assertion echo，因為 prompt 和 hw1.js 裡都有 JSDoc 與 `// test: ... Expected` 註解，agent 可以直接拿來當答案。
-所以準備了 `assets/promptA_nodoc/`，裡面的 hw1.js 拿掉了 JSDoc 與註解，prompt 也只貼函式本體
+### 前置作業（Prompt A 無 JSDoc 版）
+第一輪 Prompt A 沒有出現 assertion echo，因為 prompt 和 hw1.js 裡都有 JSDoc 與 `// test: ... Expected` 註解，agent 可以直接拿來當答案。
+所以準備了 `assets/promptA_nodoc/`，裡面的 hw1.js 拿掉了 JSDoc 與註解，prompt 也只貼函式本體。
 ```
 newrun_nodoc() {
   rm -rf ~/hw1-run-nodoc && mkdir ~/hw1-run-nodoc
@@ -158,18 +158,18 @@ newrun_nodoc() {
   cd ~/hw1-run-nodoc && ls && claude
 }
 ```
-這樣每次只需要在終端機打上 newrun_nodoc，再貼上 `prompt_<program>.txt` 的內容即可
+這樣每次只需要在終端機打上 newrun_nodoc，再貼上 `prompt_<program>.txt` 的內容即可。
 （findLast、lastZero、oddOrPos 是用 `claude -p`，所以 log 格式和其他的不同）
 
-### 前置作業(PromptB)
-這次的指令只需要一個空的資料夾，剩下透過 prompt 告訴其規格就好
+### 前置作業（Prompt B）
+這次的指令只需要一個空的資料夾，剩下透過 prompt 告訴其規格就好。
 ```
 newspec() {
   rm -rf ~/hw1-spec && mkdir ~/hw1-spec
   cd ~/hw1-spec && ls && claude # 確保資料夾要空的
 }
 ```
-這樣每次只需要在終端機打上 newspec 就會重新生成一個乾淨的環境
+這樣每次只需要在終端機打上 newspec 就會重新生成一個乾淨的環境。
 
 ### 路徑問題
 - Prompt A 的 agent 把測試檔放在根目錄，所以寫成 ./hw1.js。搬進 test/ 之後，路徑要改成 ../hw1.js。
@@ -186,8 +186,8 @@ perl -i -pe 'if (m{require\(\x27\./(findLast|lastZero|countPositive|oddOrPos)(\.
 
 grep -n -B1 "require('../hw1.js')" test/promptB_*.test.js
 ```
-### claude code 聊天紀錄
-都存在 assets/log/ 下：log_promptA_*.txt、log_promptA_noDoc_*.txt、log_promptB_*.txt、log_B3_lastZero.txt
+### Claude Code 聊天紀錄
+都存在 assets/log/ 下：log_promptA_*.txt、log_promptA_noDoc_*.txt、log_promptB_*.txt、log_B3_lastZero.txt。
 
 ### 測試檔與 log 對照
 | 版本 | 測試檔 | log |
@@ -272,7 +272,7 @@ agent 在 log 中其實有注意到可能是 bug（「locks in what is probably 
 | countPositive | B：`assert.equal(typeof countPositive([1, -1]), 'number')`（`test/promptB_countPositive.test.js`，"returns a number"） | I | R：x = [1, -1] 是陣列，進入迴圈並執行到 `if (x[i] >= 0)`。I 不成立：i = 0 時 1 >= 0 與 1 > 0 都為 true，count = 1；i = 1 時 -1 >= 0 與 -1 > 0 都為 false，count 仍為 1。陣列中沒有 0，所以每一步的 i、count 與 PC 都和正確程式相同，最後回傳 1（正確也是 1），狀態從未被感染。 |
 | oddOrPos      | hand-written：`const r = oddOrPos([-3, -2, 0, 1, 4]); assert.ok(Number.isInteger(r))`（`test/mine_reveal_oddOrPos.test.js`） | Reveal | R：進入迴圈並執行 `x[i] % 2 === 1 \|\| x[i] > 0`。I：i = 0 時 x[0] = -3，`-3 % 2` 為 -1，`-1 === 1` 為 false 且 -3 > 0 也為 false，PC 跳過 `count++`，count = 0；正確程式應執行 `count++` 使 count = 1，狀態已被感染。P：後續 -2、0 不計，1、4 計入，錯誤程式回傳 r = 2，正確應為 3，錯誤值傳到回傳值。Reveal 不成立：斷言只檢查 r 是不是整數，`Number.isInteger(2)` 為 true，測試通過，沒有看到 2 與 3 的差別。 |
 
-agent 產生的測試中沒有停在 Reveal 的例子：Prompt B 的「回傳型別」測試（`typeof oddOrPos([1, 2, 3])`、`typeof countPositive([1, -1])`）輸入裡沒有負奇數或 0，根本沒有感染狀態，停在 I。所以 oddOrPos 這一列是自己寫的測試，放在 `test/mine_reveal_oddOrPos.test.js`，執行結果為 1 pass、0 fail。
+agent 沒有產生斷言沒檢查回傳值這類的測試：Prompt B 的「回傳型別」測試（`typeof oddOrPos([1, 2, 3])`、`typeof countPositive([1, -1])`）輸入裡沒有負奇數或 0，根本沒有感染狀態，停在 I。Prompt A 的 echo 斷言與 todo 測試雖然也無法達成 Reveal（見 B2(b)），但它們的斷言其實有檢查回傳值，問題在 oracle 錯誤或失敗被隱藏，不是題目所舉「斷言沒看到錯誤值」的情況。所以 oddOrPos 這一列是自己寫的測試，放在 `test/mine_reveal_oddOrPos.test.js`，執行結果為 1 pass、0 fail。
 
 #### B2(b)
 
@@ -310,12 +310,12 @@ node -e "const {lastZero}=require('./hw1.js'); for (const x of [null,[1],[0,1],[
 
 | 項目 | agent 有寫嗎？ | 對不對？ |
 |---|:---:|:---:|
-| x | 有 | 對|
+| x | 有 | 對 |
 | i | 有（0，正確程式為 1） | 對 |
 | 回傳值 | 有（not set yet） | 對 |
 | PC | 有（迴圈條件） | 對 |
 
-有詳細列出 x, i, PC, return value，沒有錯誤，和 PartA 所寫的判斷是一樣的，PC 都指向迴圈的判定 (i < x.length, i >= 0)
+有詳細列出 x、i、PC、return value，沒有錯誤，和 Part A 所寫的判斷是一樣的，PC 都指向迴圈的判定（i < x.length、i >= 0）。
 
 #### B3(c)
 追問的 prompt：
@@ -323,16 +323,15 @@ node -e "const {lastZero}=require('./hw1.js'); for (const x of [null,[1],[0,1],[
 請針對你在(c)提出的測資，把錯誤程式和修正後的程式都逐行追蹤一遍，包含迴圈的更新步驟。每執行完一個敘述，就比較兩邊所有變數的值。兩邊的狀態有沒有在任何時候出現差異？
 ```
 
-結果:
-agent 一開始沒有發現到，所給的測資並沒有符合 (c) 的題目要求，兩者的 i 更新的不同，一邊是 i++，另一邊是 i--，經過再一次的 prompt，他有發現到 x = [1] 時，有出現錯誤狀態，後來有提出要使用與我在PartA 寫的 x = [0] 當測資，才不會有錯誤狀態的出現，新的測資就有符合 (c) 的要求。
+結果：
+agent 一開始沒有發現到所給的測資並沒有符合 (c) 的題目要求：兩者的 i 更新的不同，一邊是 i++，另一邊是 i--。經過再一次的 prompt，他有發現到 x = [1] 時有出現錯誤狀態，後來有提出要使用與我在 Part A 寫的 x = [0] 當測資，才不會有錯誤狀態的出現，新的測資就有符合 (c) 的要求。
 - 輸入：x = [0]
 - 預期輸出：0
 - 實際輸出：0
 
 ### B4
-- metamorphic relation(oddOrPos)
-  - 依據 test/mine_B4.test.js 進行測試
-      - 
+- Metamorphic relation（oddOrPos）
+  - 依據 test/mine_B4.test.js 進行測試：
       ```js
       const { test } = require('node:test');
       const assert = require('node:assert/strict');
@@ -355,11 +354,12 @@ agent 一開始沒有發現到，所給的測資並沒有符合 (c) 的題目要
         });
       }
       ```
-  - 如果 v 是一個奇數或是正數，則 oddOrPos([...x, v]) 應該等於 oddOrPos(x) + 1，否則應該等於 oddOrPos(x)
-  - 結果是 pass 過兩個 fail 兩個，fail的測資分別為
-    - Expected 是指 before + delta, Actual 則是 after
-    - x: [], v: -1 ， Expected: 1,Actual: 0
-    - x: [2, 4, 6], v: -3 ， Expected: 4,Actual: 3
+  - 如果 v 是一個奇數或是正數，則 oddOrPos([...x, v]) 應該等於 oddOrPos(x) + 1，否則應該等於 oddOrPos(x)。
+  - 結果是 pass 兩個、fail 兩個，fail 的測資分別為：
+    - Expected 是指 before + delta，Actual 則是 after
+    - x: []，v: -1，Expected: 1，Actual: 0
+    - x: [2, 4, 6]，v: -3，Expected: 4，Actual: 3
+  - `assets/B4_failing_output.txt`：錯誤版本無法通過所有資料。
   - 把 `const { oddOrPos } = require('../assets/hw1_fixed.js');` 改成這樣，正確版本的可以通過全部的測試資料。
     ```
     ➜lab2 git:(main) ✗ node --test test/mine_B4.test.js                                                  
@@ -379,24 +379,73 @@ agent 一開始沒有發現到，所給的測資並沒有符合 (c) 的題目要
 
 ### B5
 
-1. RIPR 前三項，agent 都能很好的達到，但是最後一項的 Reveal，會因為擁有的資訊而測錯了，例如Prompt A，只看到程式碼，因此生成出的 Expected 值有可能就會遵循著錯誤的程式碼生成，又或是因為使用者所下的 prompt，例如:"Make sure all tests pass"，而造成 agents 寫的是 todo。echo 是 oracle 錯了，todo 是 oracle 對了，但失敗被隱藏，兩者都卡在 Reveal 無法達成。
+1. RIPR 前三項，agent 都能很好的達到，但是最後一項的 Reveal，會因為擁有的資訊而測錯了，例如 Prompt A 只看到程式碼，因此生成出的 Expected 值有可能就會遵循著錯誤的程式碼生成，又或是因為使用者所下的 prompt，例如「Make sure all tests pass」，而造成 agents 寫的是 todo。echo 是 oracle 錯了，todo 是 oracle 對了，但失敗被隱藏，兩者都卡在 Reveal 無法達成。
 
 2. 
   - Specification：像 Prompt B 那樣只給 agent JSDoc，四個程式都抓到了 fault。
   - Metamorphic relation：這是在 B4 上有使用的。例如：oddOrPos(x) = c，那在陣列 x 後面如果加上一個奇數或正數，預期值要是 c + 1，否則不變。
 
 ### Bonus (optional): mutation testing
-```
-cd /Users/ruserxd/Desktop/master/SWT/lab2
-for f in test/promptA_oddOrPos.test.js test/promptB_oddOrPos.test.js; do
-  echo "== $f"
-  NODE_OPTIONS="--require $PWD/assets/use_fixed.js" node --test "$f" 2>&1 | grep -E "^. (pass|fail) "
-done
-```
+1. 透過 assets/use_fixed.js，將測試檔裡寫的 `require('../hw1.js')`，在執行時換成 `assets/hw1_fixed.js`。
+2. 在有 bug 的 hw1.js 上，Prompt B 有 2 個測試會失敗，Stryker 的 initial test run 無法通過。
+3. 因此先在修正版上跑 findLast 的兩份測試，確認都是 fail 0（Prompt A 另有 todo 2），Stryker 的 initial test run 才能通過。`NODE_OPTIONS="--require $PWD/assets/use_fixed.js" node --test test/promptA_findLast.test.js`
+4. 透過撰寫 stryker.A.json、stryker.B.json 兩個設定檔執行 Stryker（自動製造 mutant、自動跑測試、自動計分）。
+5. 結果：
+  - 存放在 `assets/stryker_prompt*_findLast.txt`
+  - 兩個分數：Prompt A 91.30%、Prompt B 86.96%
+  - 有一個變異體不管在 A 或 B 都存活下來，把 for 的起始值改成 `let i = x.length + 1`，但這被稱為 equivalent mutant（等價變異），不管怎麼測試都不可能成功殺死，所以實際上分數可以更高。
+  - 有一個變異未能在 A 殺死，但 B 可以，`for (let i = x.length - 1; i > 0; i--)`，修改了 i >= 0 -> i > 0，也就是作業本來錯誤的部分。
+  - 解釋：
+    變異與正常版本針對 x = [2, 3, 5]、y = 2 各執行一次的結果：
+    ```
+    ➜  lab2 git:(main) ✗ node -e "
+    const m = require('./hw1.js');               // mutant（i > 0）
+    const f = require('./assets/hw1_fixed.js');  // 正確版本（i >= 0）
+    console.log('mutant :', m.findLast([2, 3, 5], 2));
+    console.log('fixed  :', f.findLast([2, 3, 5], 2));
+    "
+    mutant : -1
+    fixed  : 0
+    ```
+    - R：這筆測資皆會進入迴圈，都有執行到被改動的條件。
+    - I：
+      - 變異版本：`0 > 0` 為 false，PC 指向 `return -1`
+      - 正確版本：`0 >= 0` 為 true，PC 指向 `if (x[i] === y)`
+      正常的版本：
+      i = 2，5 !== 2
+      i = 1，3 !== 2
+      i = 0，2 === 2
+      回傳 0
+      變異的版本：
+      i = 2，5 !== 2
+      i = 1，3 !== 2
+      跳出迴圈
+      回傳 -1
+    - P：兩個版本的回傳值不同，代表錯誤有傳到輸出。
+    - Reveal：
+      Prompt A 中 y 在 index 0 的測試有 2 個，但都被標成 `todo`。
+      將 todo 拿掉後重新執行（複製一份暫時的測試檔，不修改原檔）：
+      ```
+      == 有 todo（原檔），在 mutant 上
+      ℹ pass 14
+      ℹ fail 0
+      ℹ todo 2
+      == 拿掉 todo，在 mutant 上
+      ℹ pass 14
+      ℹ fail 2
+      ℹ todo 0
+      ```
+      assertion 其實有測試到變異產生的錯誤，但因為測試案例被標成 todo，造成 mutant 存活，Reveal 無法成立。
+
+  - 結論：雖然 Prompt A 的分數比 B 高，但它卻殺不掉最關鍵的那個 mutant（i >= 0 -> i > 0），也就是作業原本的 fault；B 沒殺掉的只是錯誤訊息被清空這類問題。所以 mutation score 跟 coverage 一樣，不能單憑總分的高低，去斷定測試的品質是好或壞。
+
 
 ### AI 使用
 使用的工具
-- claude code model:Opus 5.5
-- claude version：2.1.289 (Claude Code)
-- 日期:2026/10/1-2026/10/4
-- 聊天紀錄都存在 assets/log 內
+- Claude Code，model：Opus 5.5
+  - version：2.1.289（Claude Code）
+  - 日期：2026/10/1–2026/10/4
+  - 聊天紀錄都存在 assets/log 內
+- claude.ai（聊天介面），日期 2026/10/3–10/4
+  - https://claude.ai/share/05f61ecc-56ac-492e-bfa1-f367a1dcd7a8
+- 用途：md 檔案的檢查與提示、報告修改建議、作業的設定與驗證方法
