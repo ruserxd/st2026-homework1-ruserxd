@@ -78,7 +78,7 @@
 
 (d) 找出一個「狀態有變錯，但最後輸出剛好是對的」的測資
 - 結論：不可能經歷狀態有變錯，但最後輸出可以是對的情況。
-- 理由：一但 x[i] = 0 被判斷要 count++，就無法再將結果倒退回去，以 [-4, 2, 0, 2] 為測資範例。
+- 理由：x[i] = 0 被判斷要 count++，就無法再將結果倒退回去，以 [-4, 2, 0, 2] 為測資範例。
 - Expected = 2, Actual = 3
 
 (e) 針對 (d)，描述錯誤狀態
@@ -135,7 +135,7 @@ if (Math.abs(x[i] % 2) === 1 || x[i] > 0) {
 
 ## Part B
 ### 第一次
-我是直接在 lab2/ 這份專案下跑 Claude Code，但發現到他會讀取我在 README.md 寫的 PartA 答案，因此想到要設置一個乾淨的環境生成測試。
+我是直接在 lab2/ 這份專案下跑 Claude Code，但發現到他會讀取我在 README.md 寫的 Part A 答案，因此想到要設置一個乾淨的環境生成測試。
 
 ### 前置作業（Prompt A）
 為了不讓 Claude Code 讀到我撰寫好的 README.md Part A，所以需要先創一個空的資料夾，讓他單純透過程式碼生成每個方法的測試案例
@@ -177,17 +177,25 @@ newspec() {
 
 ```
 cd /Users/ruserxd/Desktop/master/SWT/lab2
-perl -i -pe 'if (m{require\(\x27\./hw1(\.js)?\x27\)}) { $o=$_; chomp $o; s{\./hw1(\.js)?}{../hw1.js}; $_ = "// [EDITED by student] original: $o\n$_"; }' test/promptA_*.test.js
+perl -i -pe 'if (m{require\(\x27\./hw1(\.js)?\x27\)}) {
+  $o=$_; chomp $o;
+  s{\./hw1(\.js)?}{../hw1.js};
+  $_ = "// [EDITED by student] original: $o\n$_";
+}' test/promptA_*.test.js
 
 grep -n -B1 "require('../hw1.js')" test/promptA_*.test.js
 ```
 ```
-perl -i -pe 'if (m{require\(\x27\./(findLast|lastZero|countPositive|oddOrPos)(\.js)?\x27\)}) { $o=$_; chomp $o; s{\./(findLast|lastZero|countPositive|oddOrPos)(\.js)?}{../hw1.js}; $_ = "// [EDITED by student] original: $o\n$_"; }' test/promptB_*.test.js
+perl -i -pe 'if (m{require\(\x27\./(findLast|lastZero|countPositive|oddOrPos)(\.js)?\x27\)}) {
+  $o=$_; chomp $o;
+  s{\./(findLast|lastZero|countPositive|oddOrPos)(\.js)?}{../hw1.js};
+  $_ = "// [EDITED by student] original: $o\n$_";
+}' test/promptB_*.test.js
 
 grep -n -B1 "require('../hw1.js')" test/promptB_*.test.js
 ```
 ### Claude Code 聊天紀錄
-都存在 assets/log/ 下：log_promptA_*.txt、log_promptA_noDoc_*.txt、log_promptB_*.txt、log_B3_lastZero.txt。
+都存在 `assets/log/` 下：`log_promptA_*.txt`、`log_promptA_noDoc_*.txt`、`log_promptB_*.txt`、`log_B3_lastZero.txt`。
 
 ### 測試檔與 log 對照
 | 版本 | 測試檔 | log |
@@ -205,7 +213,7 @@ node --test --experimental-test-coverage --test-coverage-include=hw1.js test/pro
 ```
 
 | Program       | Prompt | # tests | # failing     | Line % | Branch % | Fault revealed? |
-|---------------|:------:|--------:|---------------|-------:|---------:|:---------------:|
+|---------------|:------:|:-------:|:-------------:|-------:|---------:|:---------------:|
 | findLast      | A      | 16      | 0 (+2 todo)   | 100    | 100      | N\*             |
 | findLast      | B      | 34      | 2             | 100    | 100      | Y               |
 | lastZero      | A      | 7       | 0             | 100    | 100      | N (echo)        |
@@ -215,7 +223,7 @@ node --test --experimental-test-coverage --test-coverage-include=hw1.js test/pro
 | oddOrPos      | A      | 12      | 0 (+1 todo)   | 100    | 100      | N\*             |
 | oddOrPos      | B      | 28      | 6             | 100    | 100      | Y               |
 
-A = Prompt A 無 JSDoc 版（`test/promptA_*.test.js`，prompt 只貼函式本體，資料夾內 hw1.js 也拿掉 JSDoc 與 `// test:` 註解）。
+A = Prompt A 無 JSDoc 版（`test/promptA_*.test.js`，prompt 只貼函式本體，資料夾內 hw1.js 也拿掉 JSDoc 與 `// test:` 註解）。Prompt A 定義為 code only，JSDoc 屬於規格，所以不提供。
 Line % / Branch % 為該 suite 對受測函式本身的覆蓋率（`node --test --experimental-test-coverage`，未覆蓋行僅屬於其他三個函式）。
 
 \* agent 從程式本身推論出 bug，寫出能揭露 fault 的測試，但用 `{ todo: ... }` 標記，`node --test` 不把它算進 failing（顯示為 `todo`），因此從測試結果看不到 fault。若移除 `todo`，該測試會失敗。
@@ -267,10 +275,10 @@ agent 在 log 中其實有注意到可能是 bug（「locks in what is probably 
 
 | Program       | Test (quote the call and the assertion) | First condition not met (R / I / P / Reveal) | Justification |
 |---------------|-----------------------------------------|:--------------------------------------------:|---------------|
-| findLast      | A：`assert.strictEqual(findLast([1, 2, 3], 4), -1)`（`test/promptA_findLast.test.js`，"returns -1 when the value is not present"） | P | R：有跑到迴圈條件 `i > 0`。I：i = 2、1 時 3、2 皆 !== 4；到 i = 0 時錯誤程式判斷 `0 > 0` 為 false，PC 跳到 `return -1`，正確程式（`i >= 0`）此時 PC 應在 `if (x[i] === y)` 再檢查 x[0] = 1，狀態已被感染（同 PartA (d)(e)）。P 不成立：x[0] = 1 !== 4，正確程式最後也是 `return -1`，兩者回傳值都是 -1，錯誤狀態沒有傳到輸出。 |
+| findLast      | A：`assert.strictEqual(findLast([1, 2, 3], 4), -1)`（`test/promptA_findLast.test.js`，"returns -1 when the value is not present"） | P | R：有跑到迴圈條件 `i > 0`。I：i = 2、1 時 3、2 皆 !== 4；到 i = 0 時錯誤程式判斷 `0 > 0` 為 false，PC 跳到 `return -1`，正確程式（`i >= 0`）此時 PC 應在 `if (x[i] === y)` 再檢查 x[0] = 1，狀態已被感染（同 Part A (d)(e)）。P 不成立：x[0] = 1 !== 4，正確程式最後也是 `return -1`，兩者回傳值都是 -1，錯誤狀態沒有傳到輸出。 |
 | lastZero      | A：`assert.throws(() => lastZero(null), { name: 'TypeError', message: 'Not an array' })`（`test/promptA_lastZero.test.js`） | R | fault 在迴圈的起點與方向 `for (let i = 0; i < x.length; i++)`。x = null，`Array.isArray(null)` 為 false，直接拋出 TypeError('Not an array')，迴圈的 `let i = 0` 從未執行，i 也從未被賦值，沒有回傳值，所以連 Reachability 都沒有滿足。 |
 | countPositive | B：`assert.equal(typeof countPositive([1, -1]), 'number')`（`test/promptB_countPositive.test.js`，"returns a number"） | I | R：x = [1, -1] 是陣列，進入迴圈並執行到 `if (x[i] >= 0)`。I 不成立：i = 0 時 1 >= 0 與 1 > 0 都為 true，count = 1；i = 1 時 -1 >= 0 與 -1 > 0 都為 false，count 仍為 1。陣列中沒有 0，所以每一步的 i、count 與 PC 都和正確程式相同，最後回傳 1（正確也是 1），狀態從未被感染。 |
-| oddOrPos      | hand-written：`const r = oddOrPos([-3, -2, 0, 1, 4]); assert.ok(Number.isInteger(r))`（`test/mine_reveal_oddOrPos.test.js`） | Reveal | R：進入迴圈並執行 `x[i] % 2 === 1 \|\| x[i] > 0`。I：i = 0 時 x[0] = -3，`-3 % 2` 為 -1，`-1 === 1` 為 false 且 -3 > 0 也為 false，PC 跳過 `count++`，count = 0；正確程式應執行 `count++` 使 count = 1，狀態已被感染。P：後續 -2、0 不計，1、4 計入，錯誤程式回傳 r = 2，正確應為 3，錯誤值傳到回傳值。Reveal 不成立：斷言只檢查 r 是不是整數，`Number.isInteger(2)` 為 true，測試通過，沒有看到 2 與 3 的差別。 |
+| oddOrPos      | hand-written：`const r = oddOrPos([-3, -2, 0, 1, 4]); assert.ok(Number.isInteger(r))`（`test/mine_reveal_oddOrPos.test.js`） | Reveal | R：進入迴圈並執行 `x[i] % 2 === 1` 或 `x[i] > 0`。I：i = 0 時 x[0] = -3，`-3 % 2` 為 -1，`-1 === 1` 為 false 且 -3 > 0 也為 false，PC 跳過 `count++`，count = 0；正確程式應執行 `count++` 使 count = 1，狀態已被感染。P：後續 -2、0 不計，1、4 計入，錯誤程式回傳 r = 2，正確應為 3，錯誤值傳到回傳值。Reveal 不成立：斷言只檢查 r 是不是整數，`Number.isInteger(2)` 為 true，測試通過，沒有看到 2 與 3 的差別。 |
 
 agent 沒有產生斷言沒檢查回傳值這類的測試：Prompt B 的「回傳型別」測試（`typeof oddOrPos([1, 2, 3])`、`typeof countPositive([1, -1])`）輸入裡沒有負奇數或 0，根本沒有感染狀態，停在 I。Prompt A 的 echo 斷言與 todo 測試雖然也無法達成 Reveal（見 B2(b)），但它們的斷言其實有檢查回傳值，問題在 oracle 錯誤或失敗被隱藏，不是題目所舉「斷言沒看到錯誤值」的情況。所以 oddOrPos 這一列是自己寫的測試，放在 `test/mine_reveal_oddOrPos.test.js`，執行結果為 1 pass、0 fail。
 
@@ -282,7 +290,7 @@ agent 沒有產生斷言沒檢查回傳值這類的測試：Prompt B 的「回�
 
 #### B3(a)
 
-| 題目 | agent 的答案 | 評分 | 測資 | Expected（依規格） | Actual（實際執行） | 理由 |
+| 題 | agent 的答案 | 評分 | 測資 | Expected（依規格） | Actual（實際執行） | 理由 |
 |---|---|:---:|---|---|---|---|
 | (a) | 從前面開始找，改成從尾端往前找 | Correct | x = [0, 1, 0] | 2 | 0 | 跟我的答案一致 |
 | (b) | x = null | Correct | x = null | TypeError: Not an array | TypeError: Not an array | 非陣列，在進入迴圈前就拋出例外 |
@@ -292,18 +300,24 @@ agent 沒有產生斷言沒檢查回傳值這類的測試：Prompt B 的「回�
 
 Expected / Actual 的驗證指令：
 ```
-node -e "const {lastZero}=require('./hw1.js'); for (const x of [null,[1],[0,1],[0,1,0]]) { try { console.log(JSON.stringify(x), '->', lastZero(x)); } catch (e) { console.log(JSON.stringify(x), '->', e.name + ': ' + e.message); } }"
+node -e "
+const {lastZero}=require('./hw1.js');
+for (const x of [null,[1],[0,1],[0,1,0]]) {
+  try { console.log(JSON.stringify(x), '->', lastZero(x)); }
+  catch (e) { console.log(JSON.stringify(x), '->', e.name + ': ' + e.message); }
+}"
 ```
 
 **(c) 的逐步追蹤（x = [1]）**
 
 | 步驟 | 錯誤程式 | 正確程式 |
-|---|---|---|
+|---|:---:|:---:|
 | 初始化 | i = 0 | i = 0 |
 | 檢查 x[0] | 1 !== 0 | 1 !== 0 |
 | 更新 | `i++` → i = 1 | `i--` → i = -1 |
 | 條件判斷 | 1 < 1 為 false | -1 >= 0 為 false |
 | 回傳 | -1 | -1 |
+
 在迴圈對 i 的操作並不相同，因此造成兩者狀態上的不同。
 
 #### B3(b)
@@ -319,9 +333,8 @@ node -e "const {lastZero}=require('./hw1.js'); for (const x of [null,[1],[0,1],[
 
 #### B3(c)
 追問的 prompt：
-```
-請針對你在(c)提出的測資，把錯誤程式和修正後的程式都逐行追蹤一遍，包含迴圈的更新步驟。每執行完一個敘述，就比較兩邊所有變數的值。兩邊的狀態有沒有在任何時候出現差異？
-```
+
+> 請針對你在(c)提出的測資，把錯誤程式和修正後的程式都逐行追蹤一遍，包含迴圈的更新步驟。每執行完一個敘述，就比較兩邊所有變數的值。兩邊的狀態有沒有在任何時候出現差異？
 
 結果：
 agent 一開始沒有發現到所給的測資並沒有符合 (c) 的題目要求：兩者的 i 更新的不同，一邊是 i++，另一邊是 i--。經過再一次的 prompt，他有發現到 x = [1] 時有出現錯誤狀態，後來有提出要使用與我在 Part A 寫的 x = [0] 當測資，才不會有錯誤狀態的出現，新的測資就有符合 (c) 的要求。
@@ -381,9 +394,9 @@ agent 一開始沒有發現到所給的測資並沒有符合 (c) 的題目要求
 
 1. RIPR 前三項，agent 都能很好的達到，但是最後一項的 Reveal，會因為擁有的資訊而測錯了，例如 Prompt A 只看到程式碼，因此生成出的 Expected 值有可能就會遵循著錯誤的程式碼生成，又或是因為使用者所下的 prompt，例如「Make sure all tests pass」，而造成 agents 寫的是 todo。echo 是 oracle 錯了，todo 是 oracle 對了，但失敗被隱藏，兩者都卡在 Reveal 無法達成。
 
-2. 
-  - Specification：像 Prompt B 那樣只給 agent JSDoc，四個程式都抓到了 fault。
-  - Metamorphic relation：這是在 B4 上有使用的。例如：oddOrPos(x) = c，那在陣列 x 後面如果加上一個奇數或正數，預期值要是 c + 1，否則不變。
+2. 兩個獨立的 expected behavior 來源：
+   - Specification：像 Prompt B 那樣只給 agent JSDoc，四個程式都抓到了 fault。
+   - Metamorphic relation：這是在 B4 上有使用的。例如：oddOrPos(x) = c，那在陣列 x 後面如果加上一個奇數或正數，預期值要是 c + 1，否則不變。
 
 ### Bonus (optional): mutation testing
 1. 透過 assets/use_fixed.js，將測試檔裡寫的 `require('../hw1.js')`，在執行時換成 `assets/hw1_fixed.js`。
@@ -391,53 +404,52 @@ agent 一開始沒有發現到所給的測資並沒有符合 (c) 的題目要求
 3. 因此先在修正版上跑 findLast 的兩份測試，確認都是 fail 0（Prompt A 另有 todo 2），Stryker 的 initial test run 才能通過。`NODE_OPTIONS="--require $PWD/assets/use_fixed.js" node --test test/promptA_findLast.test.js`
 4. 透過撰寫 stryker.A.json、stryker.B.json 兩個設定檔執行 Stryker（自動製造 mutant、自動跑測試、自動計分）。
 5. 結果：
-  - 存放在 `assets/stryker_prompt*_findLast.txt`
-  - 兩個分數：Prompt A 91.30%、Prompt B 86.96%
-  - 有一個變異體不管在 A 或 B 都存活下來，把 for 的起始值改成 `let i = x.length + 1`，但這被稱為 equivalent mutant（等價變異），不管怎麼測試都不可能成功殺死，所以實際上分數可以更高。
-  - 有一個變異未能在 A 殺死，但 B 可以，`for (let i = x.length - 1; i > 0; i--)`，修改了 i >= 0 -> i > 0，也就是作業本來錯誤的部分。
-  - 解釋：
-    變異與正常版本針對 x = [2, 3, 5]、y = 2 各執行一次的結果：
-    ```
-    ➜  lab2 git:(main) ✗ node -e "
-    const m = require('./hw1.js');               // mutant（i > 0）
-    const f = require('./assets/hw1_fixed.js');  // 正確版本（i >= 0）
-    console.log('mutant :', m.findLast([2, 3, 5], 2));
-    console.log('fixed  :', f.findLast([2, 3, 5], 2));
-    "
-    mutant : -1
-    fixed  : 0
-    ```
-    - R：這筆測資皆會進入迴圈，都有執行到被改動的條件。
-    - I：
-      - 變異版本：`0 > 0` 為 false，PC 指向 `return -1`
-      - 正確版本：`0 >= 0` 為 true，PC 指向 `if (x[i] === y)`
-      正常的版本：
-      i = 2，5 !== 2
-      i = 1，3 !== 2
-      i = 0，2 === 2
-      回傳 0
-      變異的版本：
-      i = 2，5 !== 2
-      i = 1，3 !== 2
-      跳出迴圈
-      回傳 -1
-    - P：兩個版本的回傳值不同，代表錯誤有傳到輸出。
-    - Reveal：
-      Prompt A 中 y 在 index 0 的測試有 2 個，但都被標成 `todo`。
-      將 todo 拿掉後重新執行（複製一份暫時的測試檔，不修改原檔）：
-      ```
-      == 有 todo（原檔），在 mutant 上
-      ℹ pass 14
-      ℹ fail 0
-      ℹ todo 2
-      == 拿掉 todo，在 mutant 上
-      ℹ pass 14
-      ℹ fail 2
-      ℹ todo 0
-      ```
-      assertion 其實有測試到變異產生的錯誤，但因為測試案例被標成 todo，造成 mutant 存活，Reveal 無法成立。
-
-  - 結論：雖然 Prompt A 的分數比 B 高，但它卻殺不掉最關鍵的那個 mutant（i >= 0 -> i > 0），也就是作業原本的 fault；B 沒殺掉的只是錯誤訊息被清空這類問題。所以 mutation score 跟 coverage 一樣，不能單憑總分的高低，去斷定測試的品質是好或壞。
+   - 存放在 `assets/stryker_prompt*_findLast.txt`
+   - 兩個分數：Prompt A 91.30%、Prompt B 86.96%
+   - 有一個變異體不管在 A 或 B 都存活下來，把 for 的起始值改成 `let i = x.length + 1`，但這被稱為 equivalent mutant（等價變異），不管怎麼測試都不可能成功殺死，所以實際上分數可以更高。
+   - 有一個變異未能在 A 殺死，但 B 可以，`for (let i = x.length - 1; i > 0; i--)`，修改了 i >= 0 -> i > 0，也就是作業本來錯誤的部分。
+   - 解釋：
+     變異與正常版本針對 x = [2, 3, 5]、y = 2 各執行一次的結果：
+     ```
+     ➜  lab2 git:(main) ✗ node -e "
+     const m = require('./hw1.js');               // mutant（i > 0）
+     const f = require('./assets/hw1_fixed.js');  // 正確版本（i >= 0）
+     console.log('mutant :', m.findLast([2, 3, 5], 2));
+     console.log('fixed  :', f.findLast([2, 3, 5], 2));
+     "
+     mutant : -1
+     fixed  : 0
+     ```
+     - R：這筆測資皆會進入迴圈，都有執行到被改動的條件。
+     - I：
+       - 變異版本：`0 > 0` 為 false，PC 指向 `return -1`
+       - 正確版本：`0 >= 0` 為 true，PC 指向 `if (x[i] === y)`
+       - 正常的版本：
+         - i = 2，5 !== 2
+         - i = 1，3 !== 2
+         - i = 0，2 === 2
+         - 回傳 0
+       - 變異的版本：
+         - i = 2，5 !== 2
+         - i = 1，3 !== 2
+         - 跳出迴圈
+         - 回傳 -1
+     - P：兩個版本的回傳值不同，代表錯誤有傳到輸出。
+     - Reveal：
+       Prompt A 中 y 在 index 0 的測試有 2 個，但都被標成 `todo`。
+       將 todo 拿掉後重新執行（複製一份暫時的測試檔，不修改原檔）：
+       ```
+       == 有 todo（原檔），在 mutant 上
+       ℹ pass 14
+       ℹ fail 0
+       ℹ todo 2
+       == 拿掉 todo，在 mutant 上
+       ℹ pass 14
+       ℹ fail 2
+       ℹ todo 0
+       ```
+       assertion 其實有測試到變異產生的錯誤，但因為測試案例被標成 todo，造成 mutant 存活，Reveal 無法成立。
+   - 結論：雖然 Prompt A 的分數比 B 高，但它卻殺不掉最關鍵的那個 mutant（i >= 0 -> i > 0），也就是作業原本的 fault；B 沒殺掉的只是錯誤訊息被清空這類問題。所以 mutation score 跟 coverage 一樣，不能單憑總分的高低，去斷定測試的品質是好或壞。
 
 
 ### AI 使用
