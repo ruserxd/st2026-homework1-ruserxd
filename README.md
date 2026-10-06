@@ -1,4 +1,4 @@
-# nycu-swt-lab2
+# NYCU-SWT-homework1
 
 ## Part A 手動分析四塊程式碼的問題
 
@@ -142,7 +142,7 @@ if (Math.abs(x[i] % 2) === 1 || x[i] > 0) {
 ```
 newrun() {
   rm -rf ~/hw1-run && mkdir ~/hw1-run
-  cp /Users/ruserxd/Desktop/master/SWT/lab2/hw1.js ~/hw1-run/
+  cp <專案路徑>/hw1.js ~/hw1-run/
   cd ~/hw1-run && ls && claude
 }
 ```
@@ -154,7 +154,7 @@ newrun() {
 ```
 newrun_nodoc() {
   rm -rf ~/hw1-run-nodoc && mkdir ~/hw1-run-nodoc
-  cp /Users/ruserxd/Desktop/master/SWT/lab2/assets/promptA_nodoc/hw1.js ~/hw1-run-nodoc/
+  cp <專案路徑>/assets/promptA_nodoc/hw1.js ~/hw1-run-nodoc/
   cd ~/hw1-run-nodoc && ls && claude
 }
 ```
@@ -176,7 +176,7 @@ newspec() {
 - Prompt B 的 agent 看不到實作，所以自己猜 ./findLast 這樣形式的路徑。
 
 ```
-cd /Users/ruserxd/Desktop/master/SWT/lab2
+cd <專案路徑>
 perl -i -pe 'if (m{require\(\x27\./hw1(\.js)?\x27\)}) {
   $o=$_; chomp $o;
   s{\./hw1(\.js)?}{../hw1.js};
